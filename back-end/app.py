@@ -3,6 +3,7 @@ from flask_cors import CORS
 import whisper
 import os
 import tempfile
+import googletrans as translator
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -20,31 +21,36 @@ def save_temp_file(file_obj):
     file_obj.save(temp_path)
     return temp_path
 
-@app.route("/transcribe", methods=["POST"])
-def transcribe():
-    """
-    Endpoint to transcribe audio using Whisper.
-    """
+@app.route("/translate", methods=["POST"])
+# Translate the transcribed text to the selected language
+def translate():
     try:
-        # Check if the file is provided
+        # Check if audio file is provided
         if "audio" not in request.files:
             return jsonify({"error": "No audio file provided"}), 400
 
+        # Check if language is provided
+        language = request.form.get("language", "en")
+
         # Save the uploaded file temporarily
         audio_file = request.files["audio"]
-        audio_path = save_temp_file(audio_file)
+        audio_path = save_temp_file(audio_file) # Call the save_temp_file function
 
         # Transcribe audio using Whisper
         result = model.transcribe(audio_path)
+        transcription = result["text"]
 
         # Remove the temporary file
         os.remove(audio_path)
 
-        # Return the transcription
-        return jsonify({"transcription": result["text"]})
+        # Translate transcription to the selected language
+        translated_text = translator.translate(transcription, dest=language).text
+
+        # Return the translated transcription
+        return jsonify({"translation": translated_text})
 
     except Exception as e:
-        print(f"Error during transcription: {e}")
+        print(f"Error during translation: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
