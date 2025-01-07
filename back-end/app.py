@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import whisper
 import os
 import tempfile
@@ -6,15 +7,18 @@ import tempfile
 # Initialize Flask app
 app = Flask(__name__)
 
+# Enable Cross-Origin Resource Sharing (CORS) for the app
+CORS(app)
+
 # Load Whisper model
-model = whisper.load_model("base")
+model = whisper.load_model("large")
 
 # Save uploaded audio file to a temporary location and return the path
 def save_temp_file(file_obj):
     temp_dir = tempfile.gettempdir()
-    temp_path = os.path.join(temp_dir, file_obj.filename) 
-    file_obj.save(temp_path) 
-    return temp_path 
+    temp_path = os.path.join(temp_dir, file_obj.filename)
+    file_obj.save(temp_path)
+    return temp_path
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
