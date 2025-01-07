@@ -25,22 +25,17 @@ def save_temp_file(file_obj):
 # Translate the transcribed text to the selected language
 def translate():
     try:
-        # Check if audio file is provided
         if "audio" not in request.files:
             return jsonify({"error": "No audio file provided"}), 400
 
-        # Check if language is provided
         language = request.form.get("language", "en")
 
-        # Save the uploaded file temporarily
         audio_file = request.files["audio"]
         audio_path = save_temp_file(audio_file) # Call the save_temp_file function
 
-        # Transcribe audio using Whisper
         result = model.transcribe(audio_path)
         transcription = result["text"]
 
-        # Remove the temporary file
         os.remove(audio_path)
 
         # Translate transcription to the selected language
