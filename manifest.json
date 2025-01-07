@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Captures audio and translates captions to a selected language.",
   "permissions": ["tabCapture", "storage"],
-  "host_permissions": ["http://localhost:5000/*"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
   },
