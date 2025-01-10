@@ -3,7 +3,7 @@
   "name": "Caption Translator",
   "version": "1.0",
   "description": "Captures audio and translates captions to a selected language.",
-  "permissions": ["tabCapture", "storage"],
+  "permissions": ["tabCapture", "storage", "activeTab","tabs", "scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"

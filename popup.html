@@ -8,8 +8,11 @@
 </head>
 <body>
     <h1>Caption Translator</h1>
-    <label for="language">Translate Captions To:</label>
-    <select id="language">
+    <p>Translate live captions from system audio in real-time!</p>
+
+    <label for="language" id="languageLabel">Translate Captions To:</label>
+    <select id="language" aria-labelledby="languageLabel">
+        <option value="" disabled selected>Select a language</option>
         <option value="en">English</option>
         <option value="es">Spanish</option>
         <option value="fr">French</option>
@@ -17,12 +20,9 @@
         <option value="zh">Chinese</option>
         <option value="ar">Arabic</option>
     </select>
+
     <button id="toggleCaptions">Start Captions</button>
-    <p id="status">Status: Off</p>
+    <p id="status" class="status-off">Status: Off</p>
 </body>
 <script src="popup.js"></script>
 </html>
-
-
-
-  
