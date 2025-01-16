@@ -1,10 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Caption Translator",
+  "name": "Caption Capturer",
   "version": "1.0",
-  "description": "Captures audio and translates captions to a selected language.",
-  "permissions": ["tabCapture", "storage", "activeTab","tabs", "scripting"],
-  "host_permissions": ["<all_urls>"],
+  "description": "Captures speech and displays captions.",
+  "permissions": ["activeTab", "scripting", "storage"],
   "background": {
     "service_worker": "background.js"
   },
@@ -18,7 +17,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://*/*", "http://*/*"],
       "js": ["content.js"]
     }
   ]

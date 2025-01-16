@@ -1,103 +1,76 @@
-let mediaStream = null; // System audio stream
-let recorder = null; // Media recorder for audio chunks
-let isActive = false; // Tracks whether transcription is active
+chrome.tabs.query({}, (tabs) => {
+    tabs.forEach((tab) => {
+        console.log(`Tab ID: ${tab.id}, URL: ${tab.url || "undefined"}`);
+        if (!tab.url) {
+            console.warn(`Tab ID ${tab.id} has no URL. Possible system or restricted page.`);
+        }
+    });
+});
 
-// Listen for messages from the popup
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.command === "start") {
-        console.log("Starting audio capture...");
-        startAudioCapture(message.language).then((result) => {
-            if (result.success) {
-                isActive = true;
-                sendResponse({ status: "ok" });
-            } else {
-                console.error("Audio capture failed:", result.error);
-                sendResponse({ status: "error", error: result.error });
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs.length > 0) {
+        const activeTab = tabs[0];
+
+        // Skip restricted or undefined URLs
+        if (!activeTab.url || activeTab.url.startsWith("chrome://") || activeTab.url.startsWith("https://chrome.google.com")) {
+            console.error("Cannot inject content script into this tab:", activeTab.url);
+            return;
+        }
+
+        // Proceed with injecting content script and sending messages
+        chrome.scripting.executeScript(
+            {
+                target: { tabId: activeTab.id },
+                files: ["content.js"],
+            },
+            () => {
+                if (chrome.runtime.lastError) {
+                    console.error("Error injecting content script:", chrome.runtime.lastError.message);
+                } else {
+                    console.log("Content script injected successfully.");
+                }
             }
-        });
-        return true; // Keeps the sendResponse channel open
-    } else if (message.command === "stop") {
-        console.log("Stopping audio capture...");
-        stopAudioCapture();
-        isActive = false;
-        sendResponse({ status: "ok" });
+        );
+    } else {
+        console.error("No active tab found.");
     }
 });
 
-// Start capturing audio
-async function startAudioCapture(language) {
-    try {
-        // Request access to the system audio routed through BlackHole or Loopback
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-                echoCancellation: false,
-                noiseSuppression: false,
-                deviceId: "default", 
-            },
-        });
-
-        console.log("Audio capture started.");
-
-        // Create a MediaRecorder to handle audio chunks
-        recorder = new MediaRecorder(mediaStream);
-        recorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                sendAudioToBackend(event.data, language); // call sendAudioToBackend function
-            }
-        };
-
-        recorder.start(1000);
-        return { success: true };
-    } catch (error) {
-        console.error("Error capturing audio:", error);
-        return { success: false, error: error.message };
-    }
-}
-
-// Stop capturing audio
-function stopAudioCapture() {
-    if (recorder) {
-        recorder.stop();
-        console.log("Recorder stopped.");
-        recorder = null;
-    }
-
-    if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-        console.log("Media stream stopped.");
-        mediaStream = null;
-    }
-}
-
-// Send audio to the backend for transcription/translation
-async function sendAudioToBackend(audioBlob, language) {
-    const formData = new FormData();
-    formData.append("audio", audioBlob, "audio.wav");
-    formData.append("language", language);
-
-    try {
-        console.log("Sending audio to backend...");
-        const response = await fetch("http://localhost:5000/translate", {
-            method: "POST",
-            body: formData,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Backend error: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log("Translation received:", data.translation);
-
-        // Send the translation to the content script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.command === "start" || message.command === "stop") {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length > 0) {
-                chrome.tabs.sendMessage(tabs[0].id, { caption: data.translation });
+                const activeTab = tabs[0];
+
+                // Ensure content script is injected
+                chrome.scripting.executeScript(
+                    {
+                        target: { tabId: activeTab.id },
+                        files: ["content.js"],
+                    },
+                    () => {
+                        if (chrome.runtime.lastError) {
+                            console.error("Error injecting content script:", chrome.runtime.lastError.message);
+                            sendResponse({ status: "error", error: chrome.runtime.lastError.message });
+                            return;
+                        }
+
+                        // Send the command to the content script
+                        chrome.tabs.sendMessage(activeTab.id, {
+                            command: message.command === "start" ? "startCapture" : "stopCapture",
+                            language: message.language,
+                        }, (response) => {
+                            console.log("Message sent to content script:", response);
+                            sendResponse(response);
+                        });
+                    }
+                );
             } else {
-                console.error("No active tab to send translation.");
+                console.error("No active tab found.");
+                sendResponse({ status: "error", error: "No active tab found." });
             }
         });
-    } catch (error) {
-        console.error("Error sending audio to backend:", error);
+
+        return true;
     }
-}
+});

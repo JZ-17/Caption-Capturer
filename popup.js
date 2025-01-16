@@ -1,60 +1,62 @@
+let isActive = false;
+
 document.addEventListener("DOMContentLoaded", () => {
     const languageSelect = document.getElementById("language");
     const toggleButton = document.getElementById("toggleCaptions");
-    const statusText = document.getElementById("status");
+    const status = document.getElementById("status");
 
-    let isActive = false; // Tracks whether captions are active
+    // Load the state from storage
+    chrome.storage.local.get(["isActive", "selectedLanguage"], (data) => {
+        isActive = data.isActive || false;
+        const savedLanguage = data.selectedLanguage;
 
-    // Restore state on popup load
-    chrome.storage.local.get(["isActive", "selectedLanguage"], (result) => {
-        isActive = result.isActive || false;
-        const selectedLanguage = result.selectedLanguage || "";
-
-        if (selectedLanguage) {
-            languageSelect.value = selectedLanguage;
+        if (savedLanguage) {
+            languageSelect.value = savedLanguage;
         }
 
-        updateUI(isActive);
+        updateUI();
     });
 
-    toggleButton.addEventListener("click", () => {
-        const language = languageSelect.value;
+    // Save language when changed
+    languageSelect.addEventListener("change", () => {
+        const selectedLanguage = languageSelect.value;
+        chrome.storage.local.set({ selectedLanguage });
+        console.log("Language saved:", selectedLanguage);
+    });
 
-        if (!language) {
-            alert("Please select a language before starting captions.");
-            return;
-        }
+    // Handle Start/Stop Captions
+    toggleButton.addEventListener("click", () => {
+        const selectedLanguage = languageSelect.value;
 
         if (!isActive) {
-            // Start Captions
-            chrome.runtime.sendMessage({ command: "start", language }, (response) => {
-                if (response?.status === "ok") {
-                    isActive = true;
-                    saveState(isActive, language);
-                    updateUI(true);
-                } else {
-                    alert("An error occurred: " + response.error);
-                }
+            if (!selectedLanguage) {
+                alert("Please select a language to start captions.");
+                return;
+            }
+
+            chrome.runtime.sendMessage({ command: "start", language: selectedLanguage }, (response) => {
+                console.log(response.status);
             });
+            isActive = true;
         } else {
-            // Stop Captions
             chrome.runtime.sendMessage({ command: "stop" }, (response) => {
-                if (response?.status === "ok") {
-                    isActive = false;
-                    saveState(isActive, null);
-                    updateUI(false);
-                }
+                console.log(response.status);
             });
+            isActive = false;
         }
+
+        // Save active state
+        chrome.storage.local.set({ isActive });
+        updateUI();
     });
 
-    function updateUI(active) {
-        toggleButton.textContent = active ? "Stop Captions" : "Start Captions";
-        statusText.textContent = `Status: ${active ? "On" : "Off"}`;
-        statusText.className = active ? "status-on" : "status-off";
-    }
-
-    function saveState(active, language) {
-        chrome.storage.local.set({ isActive: active, selectedLanguage: language });
+    function updateUI() {
+        if (isActive) {
+            toggleButton.textContent = "Stop Captions";
+            status.textContent = "Status: On";
+        } else {
+            toggleButton.textContent = "Start Captions";
+            status.textContent = "Status: Off";
+        }
     }
 });
