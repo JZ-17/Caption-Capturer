@@ -31,7 +31,7 @@ function startRecognition(language = "en-US") {
         console.log("Interim Transcript:", interimTranscript);
         console.log("Final Transcript:", finalTranscript);
 
-        // Update the overlay with the transcriptions
+        // Update the overlay with the transcriptions and understand this portion later
         updateOverlay(interimTranscript || finalTranscript, !!finalTranscript);
     };
 
@@ -71,7 +71,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-
 // Update the captions overlay
 function updateOverlay(text, isFinal) {
     let overlay = document.getElementById("speech-overlay");
@@ -100,6 +99,6 @@ function updateOverlay(text, isFinal) {
     if (isFinal) {
         setTimeout(() => {
             overlay.remove();
-        }, 3000);
+        }, 500);
     }
 }

@@ -59,4 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
             status.textContent = "Status: Off";
         }
     }
+
+    const statusMessage = document.getElementById("tabStatusMessage");
+
+    // Test tab accessibility
+    chrome.runtime.sendMessage({ command: "testTabAccessibility" }, (response) => {
+        if (response.accessible) {
+            statusMessage.textContent = "The active tab is accessible.";
+            statusMessage.style.color = "green";
+        } else {
+            statusMessage.textContent = `The active tab is not accessible`;
+            statusMessage.style.color = "red";
+        }
+    });
 });

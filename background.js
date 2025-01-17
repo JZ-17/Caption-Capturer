@@ -1,3 +1,4 @@
+// Check to see if tabs are able to be accessed
 chrome.tabs.query({}, (tabs) => {
     tabs.forEach((tab) => {
         console.log(`Tab ID: ${tab.id}, URL: ${tab.url || "undefined"}`);
@@ -72,5 +73,39 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
 
         return true;
+    }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.command === "testTabAccessibility") {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs.length === 0) {
+                return sendResponse({ accessible: false, reason: "No active tab found." });
+            }
+
+            const activeTab = tabs[0];
+
+            chrome.scripting.executeScript(
+                {
+                    target: { tabId: activeTab.id },
+                    func: () => true, // A simple script that always returns true
+                },
+                () => {
+                    if (chrome.runtime.lastError) {
+                        sendResponse({
+                            accessible: false,
+                            reason: chrome.runtime.lastError.message,
+                        });
+                    } else {
+                        sendResponse({
+                            accessible: true,
+                            reason: "Tab is accessible.",
+                        });
+                    }
+                }
+            );
+        });
+
+        return true; // Keep the response channel open
     }
 });
