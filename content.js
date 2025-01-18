@@ -53,6 +53,15 @@ function stopRecognition() {
         console.log("Speech recognition stopped.");
         recognition = null;
     }
+    clearOverlay()
+}
+
+// Clears Overlay
+function clearOverlay() {
+    const overlay = document.getElementById("speech-overlay");
+    if (overlay) {
+        overlay.remove(); // Remove the overlay element
+    }
 }
 
 // Listen for messages from the background script
@@ -71,10 +80,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-// Update the captions overlay
-function updateOverlay(text, isFinal) {
+let overlayTimeout = null; // Global timeout reference
+
+function updateOverlay(text, language) {
     let overlay = document.getElementById("speech-overlay");
 
+    // Create the overlay if it doesn't exist
     if (!overlay) {
         overlay = document.createElement("div");
         overlay.id = "speech-overlay";
@@ -90,15 +101,46 @@ function updateOverlay(text, isFinal) {
             fontSize: "20px",
             zIndex: "9999",
             textAlign: "center",
+            maxWidth: "90%",
+            whiteSpace: "pre-line", // Allow line breaks
         });
         document.body.appendChild(overlay);
     }
 
-    overlay.textContent = text;
-
-    if (isFinal) {
-        setTimeout(() => {
-            overlay.remove();
-        }, 500);
+    if (!overlay.textBuffer) {
+        overlay.textBuffer = [];
     }
+
+    // Group text by language type
+    if (["zh-CN", "zh-TW", "ja"].includes(language)) {
+        const characters = text.split("");
+        for (let i = 0; i < characters.length; i += 15) {
+            overlay.textBuffer.push(characters.slice(i, i + 15).join(""));
+        }
+    } else {
+        const words = text.split(/\s+/);
+        for (let i = 0; i < words.length; i += 7) {
+            overlay.textBuffer.push(words.slice(i, i + 7).join(" "));
+        }
+    }
+
+    // Ensure only the last 2 lines remain
+    overlay.textBuffer = overlay.textBuffer.slice(-2);
+
+    // Update the overlay content with the buffer
+    overlay.textContent = overlay.textBuffer.join("\n");
+
+    // Reset the overlay timeout
+    resetOverlayTimeout();
+}
+
+// Function to remove the overlay after 3 seconds of inactivity
+function resetOverlayTimeout() {
+    clearTimeout(overlayTimeout); // Clear any existing timeout
+    overlayTimeout = setTimeout(() => {
+        const overlay = document.getElementById("speech-overlay");
+        if (overlay) {
+            overlay.remove(); // Remove the overlay after 3 seconds
+        }
+    }, 3000); // 3-second delay
 }

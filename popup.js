@@ -1,5 +1,28 @@
 let isActive = false;
 
+document.getElementById("toggleCaptions").addEventListener("click", () => {
+    const languageSelect = document.getElementById("language");
+    const selectedLanguage = languageSelect.value || "en-US";
+    const toggleButton = document.getElementById("toggleCaptions");
+    const status = document.getElementById("status");
+
+    if (toggleButton.textContent === "Start Captions") {
+        // Start captions
+        chrome.runtime.sendMessage({ command: "startCapture", language: selectedLanguage }, (response) => {
+            console.log(response.status);
+        });
+        toggleButton.textContent = "Stop Captions";
+        status.textContent = "Status: On";
+    } else {
+        // Stop captions
+        chrome.runtime.sendMessage({ command: "stopCapture" }, (response) => {
+            console.log(response.status);
+        });
+        toggleButton.textContent = "Start Captions";
+        status.textContent = "Status: Off";
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const languageSelect = document.getElementById("language");
     const toggleButton = document.getElementById("toggleCaptions");
