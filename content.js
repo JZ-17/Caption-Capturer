@@ -1,5 +1,3 @@
-let recognition = null;
-
 // Start speech recognition
 function startRecognition(language = "en-US") {
     if (!("webkitSpeechRecognition" in window)) {
@@ -94,7 +92,7 @@ function updateOverlay(text, language) {
             bottom: "10%",
             left: "50%",
             transform: "translateX(-50%)",
-            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
             color: "white",
             padding: "10px 20px",
             borderRadius: "8px",

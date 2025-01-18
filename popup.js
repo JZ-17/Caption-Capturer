@@ -20,6 +20,7 @@ document.getElementById("toggleCaptions").addEventListener("click", () => {
         });
         toggleButton.textContent = "Start Captions";
         status.textContent = "Status: Off";
+        status.style.color = "red";
     }
 });
 
@@ -88,10 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Test tab accessibility
     chrome.runtime.sendMessage({ command: "testTabAccessibility" }, (response) => {
         if (response.accessible) {
-            statusMessage.textContent = "The active tab is accessible.";
+            statusMessage.textContent = "The active tab is  interpretable.";
             statusMessage.style.color = "green";
         } else {
-            statusMessage.textContent = `The active tab is not accessible`;
+            statusMessage.textContent = "The active tab is not interpretable.";
             statusMessage.style.color = "red";
         }
     });
