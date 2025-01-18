@@ -114,18 +114,18 @@ function updateOverlay(text, language) {
     // Group text by language type
     if (["zh-CN", "zh-TW", "ja"].includes(language)) {
         const characters = text.split("");
-        for (let i = 0; i < characters.length; i += 15) {
-            overlay.textBuffer.push(characters.slice(i, i + 15).join(""));
+        for (let i = 0; i < characters.length; i += 10) {
+            overlay.textBuffer.push(characters.slice(i, i + 10).join(""));
         }
     } else {
         const words = text.split(/\s+/);
-        for (let i = 0; i < words.length; i += 7) {
-            overlay.textBuffer.push(words.slice(i, i + 7).join(" "));
+        for (let i = 0; i < words.length; i += 8) {
+            overlay.textBuffer.push(words.slice(i, i + 8).join(" "));
         }
     }
 
     // Ensure only the last 2 lines remain
-    overlay.textBuffer = overlay.textBuffer.slice(-2);
+    overlay.textBuffer = overlay.textBuffer.slice(-1);
 
     // Update the overlay content with the buffer
     overlay.textContent = overlay.textBuffer.join("\n");
@@ -136,11 +136,11 @@ function updateOverlay(text, language) {
 
 // Function to remove the overlay after 3 seconds of inactivity
 function resetOverlayTimeout() {
-    clearTimeout(overlayTimeout); // Clear any existing timeout
+    clearTimeout(overlayTimeout); 
     overlayTimeout = setTimeout(() => {
         const overlay = document.getElementById("speech-overlay");
         if (overlay) {
-            overlay.remove(); // Remove the overlay after 3 seconds
+            overlay.remove();
         }
-    }, 3000); // 3-second delay
+    }, 3000); 
 }
