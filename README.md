@@ -18,17 +18,16 @@ The caption Capturer is a Google Chrome extension that records and captures syst
 7. Open your computer's control panel.
 8. Select Hardware and Sound.
 9. Select Sound.
-10. Set the Virtual Audio Cable or virtual machine of choice to default in both playback and recording. Screenshot 2025-01-18 110525 Screenshot 2025-01-18 110613
-11. 
+10. Set the Virtual Audio Cable or virtual machine of choice to default in both playback and recording. 
 ![404546293-00910dfb-8be6-4f67-981d-47cac959c74f](https://github.com/user-attachments/assets/9ed21c6e-7f86-430c-9301-0929153e5ef8)
 
 ![404546337-a1732ac6-24fc-4f13-88da-7c347259642f](https://github.com/user-attachments/assets/5c8a6df2-d2dd-4a1e-95fe-1fdf96aed926)
 
-12. Open Audio Repeater (MME)
-13. In the Wave In setting, select the Virtual Audio Cable or choice of virtual machine.
-14. In the Wave out setting, select systems speakers or choice audio output. image
+11. Open Audio Repeater (MME)
+12. In the Wave In setting, select the Virtual Audio Cable or choice of virtual machine.
+13. In the Wave out setting, select systems speakers or choice audio output. image
 ![Screenshot 2025-01-18 110838](https://github.com/user-attachments/assets/2991e2a2-7576-4bb3-b16d-978b5aaf7d4f)
-15. Press start and enjoy :) If it crashes, retry with Audio Repeater (KS).
+14. Press start and enjoy :) If it crashes, retry with Audio Repeater (KS).
 
 ## Local Installation (Mac) 
 1. Clone this repository.
@@ -42,13 +41,13 @@ The caption Capturer is a Google Chrome extension that records and captures syst
 9. 
 <img width="912" alt="404625023-0f36cefd-33d0-4dfd-a023-ad98870a2cdf" src="https://github.com/user-attachments/assets/4c49da14-f6bb-4f77-a75d-70cf63b9e39b" />
 
-<p>9. Go to your device's audio settings and set your newly created Multi-Output device as the audio output and your virtual machine as the input.</p>
+<p>10. Go to your device's audio settings and set your newly created Multi-Output device as the audio output and your virtual machine as the input.</p>
 
 <img width="827" alt="404625070-05cca4ef-a2b0-408a-af9f-df34775d75f1" src="https://github.com/user-attachments/assets/140f5449-eea3-42e0-91db-037e7e169fdd" />
 
 <img width="827" alt="404625089-d171dcf1-6e19-4b5e-b57c-fcd3f770ae33" src="https://github.com/user-attachments/assets/9954caf0-424f-4bc4-93c5-3c4b518c03a5" />
 
-<p>10. Press start and have fun :)</p>
+<p>11. Press start and have fun :)</p>
 
 ## Usage
 1. Click on the Caption Captuerer icon from your Chrome toolbar.
