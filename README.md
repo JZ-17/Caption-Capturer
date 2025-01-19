@@ -42,8 +42,9 @@ The caption Capturer is a Google Chrome extension that records and captures syst
 <img width="827" alt="404625089-d171dcf1-6e19-4b5e-b57c-fcd3f770ae33" src="https://github.com/user-attachments/assets/9954caf0-424f-4bc4-93c5-3c4b518c03a5" />
 <p>10. Press start and have fun :)</p>
 
-## Usage (Windows)
-2. Click on the Caption Captuerer icon from your Chrome toolbar.
+## Usage
+1. Click on the Caption Captuerer icon from your Chrome toolbar.
+2. Select the language you wish to detect and create captions for.
 3. Click "Start Captions" to begin the live audio transcription.
 4. View Captions as an overlay on the current webpage.
 5. Click "Stop Captions" to end the transcription.
