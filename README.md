@@ -1,5 +1,6 @@
 ## Caption Capturer
 The caption Capturer is a Google Chrome extension that records and captures system audio and transcribes it into live captions using the Web Speech API.
+
 ![Screenshot 2025-01-18 at 10 35 28 PM](https://github.com/user-attachments/assets/a20fda17-fca1-4da3-bbcf-c78247e48930)
 
 ## Features
