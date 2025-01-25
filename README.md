@@ -8,6 +8,10 @@ Caption Capturer is a Google Chrome extension that records and captures system a
 - Detects whether the active tab's security measures allow for transcription.
 - Displays captions as overlay.
 
+## Chrome Installation
+1. Simply download from https://chromewebstore.google.com/detail/caption-capturer/fmnjkgbnemdihoibnkojnbfbbmbacfkf?authuser=1&hl=en
+2. Then proceed to step 6 for either Windows or Mac users.
+
 ## Local Installation (Windows)
 1. Clone this repository.
 2. On Google Chrome go to chrome://extensions/ .
